@@ -1,7 +1,7 @@
-use tokio::time::sleep;
+use std::thread;
 use std::time::Duration;
 use rand::seq::SliceRandom;
-use rand::thread_rng;
+use rand::{Rng, thread_rng};
 use rusb::{Context, DeviceHandle, Result, UsbContext};
 
 fn detach_device<T: UsbContext>(handle: &DeviceHandle<T>) -> Result<()> {
@@ -14,8 +14,8 @@ fn detach_device<T: UsbContext>(handle: &DeviceHandle<T>) -> Result<()> {
 
     Ok(())
 }
-#[tokio::main]
-async fn main() {
+
+fn main() {
     loop {
         match scan_usb_devices() {
             Ok(handlers) => {
@@ -29,7 +29,7 @@ async fn main() {
             Err(e) => eprintln!("Error: {}", e),
         }
 
-        sleep(Duration::from_secs(10 * 60)).await;
+        thread::sleep(Duration::from_secs(thread_rng().gen_range(10..=600)));
     }
 }
 
